@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+    # PHP Service container
+    app:
+        platform: linux/amd64
+        build:
+            args:
+                user: 1000
+                uid: 1000
+            context: .
+            dockerfile: Dockerfile
+        image: ${APP_IMAGE:-app_image}
+        container_name: app
+        restart: unless-stopped
+        depends_on:
+            - mysql
+            - redis
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+            - ./docker-config/php/php.ini:/usr/local/etc/php/php.ini
+        networks:
+            - laravel_network
+
+    # Nginx service
+    webserver:
+        platform: linux/amd64
+        image: nginx:alpine
+        container_name: webserver
+        restart: unless-stopped
+        ports:
+            - "8080:80"
+        depends_on:
+            - app
+        volumes:
+            - ./:/var/www
+            - ./docker-config/nginx/:/etc/nginx/conf.d
+        networks:
+            - laravel_network
+
+    # MySQL service
+    mysql:
+        platform: linux/amd64
+        image: mysql:5.7.22
+        container_name: mysql
+        restart: unless-stopped
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+            MYSQL_DATABASE: ${MYSQL_DATABASE:-WiFiSwap_db}
+            MYSQL_USER: ${MYSQL_USER:-root}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD:-root}
+        volumes:
+            - mysql_data:/var/lib/mysql
+            - ./docker-config/mysql/mysql.cnf:/etc/mysql/my.cnf:ro
+        networks:
+            - laravel_network
+        ports:
+            - "3306:3306"
+
+    # phpMyAdmin service
+    phpmyadmin:
+        image: phpmyadmin:5.2.1-apache
+        container_name: phpmyadmin
+        restart: unless-stopped
+        ports:
+            - "8383:80"
+        environment:
+            PMA_HOST: mysql
+            PMA_PORT: 3306
+            PMA_USER: ${MYSQL_USER:-root}
+            PMA_PASSWORD: ${MYSQL_PASSWORD:-root}
+        depends_on:
+            - mysql
+        networks:
+            - laravel_network
+
+    # Redis service
+    redis:
+        image: redis:7.2-alpine
+        container_name: redis
+        ports:
+            - "6379:6379"
+        networks:
+            - laravel_network
+
+volumes:
+    mysql_data:
+        driver: local
+
+networks:
+    laravel_network:
+        driver: bridge
