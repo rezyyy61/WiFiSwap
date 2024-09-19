@@ -19,5 +19,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
+Route::get('/dashboard', [MessageController::class, 'show'])->name('dashboard');
+
 
 require __DIR__.'/auth.php';
