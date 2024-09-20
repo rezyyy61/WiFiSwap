@@ -34,6 +34,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
+# Expose port 9000 for PHP-FPM and WebSocket port (6001 for Echo Server or Reverb)
+EXPOSE 9000 6001
+
 # Expose port 9000 and start PHP-FPM server
 EXPOSE 9000
 CMD ["php-fpm"]
