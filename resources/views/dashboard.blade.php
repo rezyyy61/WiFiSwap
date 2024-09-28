@@ -6,7 +6,15 @@
     </x-slot>
 
 
-    <div class="py-12">
+    <div class="py-12"
+
+         x-init="
+           Echo.channel('chat')
+              .listen('Example', (event)=>{
+               console.log(event)
+    })
+         "
+    >
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="bg-gray-600 p-6 text-gray-700 dark:text-gray-100">
@@ -104,10 +112,16 @@
                             </button>
                         </div>
                     </form>
-
                 </div>
             </div>
         </div>
     </div>
 
 </x-app-layout>
+
+{{--<script>--}}
+{{--    Echo.channel('chat')--}}
+{{--    .listen('Example', (event)=>{--}}
+{{--        console.log(event)--}}
+{{--    })--}}
+{{--</script>--}}
