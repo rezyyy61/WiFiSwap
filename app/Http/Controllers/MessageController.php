@@ -11,6 +11,7 @@ class MessageController extends Controller
 {
     public function store(Request $request)
     {
+        dd('dd');
         $request->validate([
             'message' => 'required',
         ]);

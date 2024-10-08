@@ -11,16 +11,17 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class Example implements ShouldBroadcastNow
+class ChatRoomSameIpEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct()
+    public $message;
+    public $chatRoomId;
+
+    public function __construct($message, $chatRoomId)
     {
-        //
+        $this->message = $message;
+        $this->chatRoomId = $chatRoomId;
     }
 
     /**
@@ -31,7 +32,7 @@ class Example implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new Channel('chat'),
+            new PrivateChannel('chatRoomSameIp.'.$this->chatRoomId),
         ];
     }
 }

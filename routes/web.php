@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\MessageController;
+
 use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -9,7 +10,7 @@ Route::get('/', function () {
 });
 
 Route::get('/broadcast', function () {
-    broadcast(new \App\Events\Example());
+    broadcast(new \App\Events\ChatRoomSameIpEvent());
 });
 
 
@@ -23,8 +24,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
-Route::get('/dashboard', [MessageController::class, 'show'])->name('dashboard');
+Route::middleware(['auth'])->group(function () {
+    Broadcast::routes();
+});
+
+//
+//Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
+//Route::get('/dashboard', [MessageController::class, 'show'])->name('dashboard');
 
 
 require __DIR__.'/auth.php';
