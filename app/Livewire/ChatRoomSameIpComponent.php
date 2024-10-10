@@ -13,10 +13,12 @@ class ChatRoomSameIpComponent extends Component
 {
     public string $message = '';
     public $messages = [];
+    public int $senderId;
     public int $chatRoomId;
 
     public function mount()
     {
+        $this->senderId = Auth::id();
         $this->loadMessages();
     }
 

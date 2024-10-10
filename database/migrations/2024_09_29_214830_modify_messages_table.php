@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('messages', function (Blueprint $table) {
+            $table->string('receiver_id')->nullable()->after('sender_id');
             $table->string('ip')->after('message')->nullable();
             $table->text('useragent')->after('ip')->nullable();
         });
@@ -23,6 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('messages', function (Blueprint $table) {
+            $table->dropColumn('receiver_id');
             $table->dropColumn('ip');
             $table->dropColumn('useragent');
         });

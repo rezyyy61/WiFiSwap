@@ -1,5 +1,5 @@
-<div class="bg-gray-600 p-6 text-gray-700 dark:text-gray-100">
-    <div id="chat-container" class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-800 h-[800px]">
+<div class="bg-gray-600 text-gray-700 dark:text-gray-100">
+    <div id="chat-container" class="flex-1 overflow-y-auto space-y-4 bg-gray-800 h-[600px]">
         @foreach($messages as $message)
             @if($message->sender_id === Auth::id())
                 <!-- Message from the current user (right-aligned) -->
