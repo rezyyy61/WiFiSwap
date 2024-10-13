@@ -17,16 +17,11 @@ class TrackOnlineStatus
 
     public function handle($request, Closure $next)
     {
-        Log::info('Middleware invoked');
-        Log::info('Auth check result: ' . (Auth::check() ? 'Authenticated' : 'Not authenticated'));
-
         if (Auth::check()) {
-            Log::info('checked');
             $user = Auth::user();
-            Log::info($user);
             $user->update(['online' => true]);
 
-            $user->update(['ip_address' => $request->ip()]);
+            $user->update(['ip' => $request->ip()]);
         }
 
         return $next($request);

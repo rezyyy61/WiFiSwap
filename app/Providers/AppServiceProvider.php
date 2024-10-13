@@ -3,6 +3,10 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Listeners\CreateChatRoomOnLoginOrRegister;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Event;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Registering event listeners
+        Event::listen(Registered::class, CreateChatRoomOnLoginOrRegister::class);
+        Event::listen(Login::class, CreateChatRoomOnLoginOrRegister::class);
     }
 }
