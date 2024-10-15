@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('messages', function (Blueprint $table) {
             $table->string('receiver_id')->nullable()->after('sender_id');
+            $table->foreignId('chat_room_id')->after('sender_id');
             $table->string('ip')->after('message')->nullable();
             $table->text('useragent')->after('ip')->nullable();
         });

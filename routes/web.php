@@ -12,11 +12,11 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified', \App\Http\Middleware\TrackOnlineStatus::class])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/wifi', function () {
     return view('wifi');
-})->middleware(['auth', 'verified', \App\Http\Middleware\TrackOnlineStatus::class])->name('wifi');
+})->middleware(['auth', 'verified'])->name('wifi');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

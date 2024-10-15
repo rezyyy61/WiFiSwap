@@ -19,6 +19,7 @@ class OnlineUsersComponent extends Component
     {
         $currentUser = Auth::user();
         $users = User::where('ip', $currentUser->ip)
+            ->where('id', '!=', Auth::id())
             ->where('online', 1)
             ->get();
         $this->users = $users;
