@@ -22,26 +22,11 @@ class ChatRoomSameIpComponent extends Component
 
     public function mount()
     {
-        $this->chatRoomId = 0; // Initialize chatRoomId
-        $this->createChatRoom();
-        $this->loadChatRooms(); // Load chat rooms on mount
-        $this->setDefaultChatRoom(); // Load today's chat by default
+        $this->chatRoomId = 0;
+        $this->setDefaultChatRoom();
     }
 
-    public function createChatRoom(): void
-    {
-        $existingChatRoom = ChatRoom::where('ip', request()->ip())
-            ->whereDate('created_at', Carbon::today())
-            ->first();
 
-        if (!$existingChatRoom) {
-            $chatroom = new ChatRoom;
-            $chatroom->ip = request()->ip();
-            $chatroom->name = request()->ip();
-            $chatroom->logo = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
-            $chatroom->save();
-        }
-    }
 
     public function setDefaultChatRoom()
     {
@@ -77,19 +62,6 @@ class ChatRoomSameIpComponent extends Component
         }
     }
 
-    public function loadChatRooms()
-    {
-        $chatRooms = ChatRoom::orderBy('created_at', 'desc')->get();
-
-        foreach ($chatRooms as $chatRoom) {
-            $this->chatRooms[] = [
-                'id' => $chatRoom->id,
-                'name' => $chatRoom->name,
-                'logo' => $chatRoom->logo,
-                'created_at' => $chatRoom->created_at,
-            ];
-        }
-    }
 
     public function sendMessage()
     {
@@ -120,10 +92,9 @@ class ChatRoomSameIpComponent extends Component
                 $this->dispatch('scrollDown');
             } catch (\Exception $e) {
                 Log::error('There was an error sending your message: ' . $e);
-                session()->flash('error', 'Failed to send the message. Please try again.');
             }
         } else {
-            session()->flash('error', 'You cannot send messages in chat rooms from previous days.');
+            Log::error('You cannot send messages in chat rooms from previous days.: ');
         }
     }
 

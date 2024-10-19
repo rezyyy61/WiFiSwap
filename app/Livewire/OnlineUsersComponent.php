@@ -2,28 +2,104 @@
 
 namespace App\Livewire;
 
+use App\Events\UserOnlineEvent;
+use App\Models\ChatRoom;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class OnlineUsersComponent extends Component
 {
-    public $users = [];
+    public array $chatRooms = [];
+    public array $onlineUsers = [];
+
+    protected $listeners = ['listenForUser', 'refreshOnlineUsers'];
 
     public function mount()
     {
-        $this->onlineUsersSameIp();
+        $this->createChatRoom();
+        $this->loadChatRooms();
+        $this->loadOnlineUsersWithSameIp();
     }
 
-    public function onlineUsersSameIp()
+    public function loadOnlineUsersWithSameIp()
     {
         $currentUser = Auth::user();
-        $users = User::where('ip', $currentUser->ip)
-            ->where('id', '!=', Auth::id())
-            ->where('online', 1)
-            ->get();
-        $this->users = $users;
 
+        if ($currentUser) {
+            // Fetch online users with the same IP
+            $users = User::where('ip', $currentUser->ip)
+                ->where('id', '!=', $currentUser->id)
+                ->where('online', 1)
+                ->with('profile')
+                ->get();
+
+            // Map users to required format
+            $this->onlineUsers = $users->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'profile' => $user->profile ? [
+                        'profile_image' => $user->profile->profile_image,
+                        'background_color' => $user->profile->background_color,
+                        'accountId' => $user->profile->accountId,
+                        'bio' => $user->profile->bio,
+                        'phone' => $user->profile->phone,
+                    ] : null,
+                ];
+            })->toArray();
+
+            UserOnlineEvent::dispatch($this->onlineUsers);
+        }
+    }
+
+    public function refreshOnlineUsers()
+    {
+        $this->loadOnlineUsersWithSameIp();
+    }
+
+    public function getListeners(): array
+    {
+        return [
+            "echo:online-users,UserOnlineEvent" => "listenForUser"
+        ];
+    }
+
+    public function listenForUser($event): void
+    {
+        Log::info('listenForUser triggered'); // Check if the listener is triggered
+        Log::info('Received event', ['event' => $event]); // Log the event
+        $this->onlineUsers = $event['onlineUsers'] ?? [];
+    }
+
+    public function createChatRoom(): void
+    {
+        $existingChatRoom = ChatRoom::where('ip', request()->ip())
+            ->whereDate('created_at', Carbon::today())
+            ->first();
+
+        if (!$existingChatRoom) {
+            // Create a new chat room
+            ChatRoom::create([
+                'ip' => request()->ip(),
+                'name' => request()->ip(),
+                'logo' => sprintf('#%06X', mt_rand(0, 0xFFFFFF)),
+            ]);
+        }
+    }
+
+    public function loadChatRooms()
+    {
+        $this->chatRooms = ChatRoom::orderBy('created_at', 'desc')->get()->map(function ($chatRoom) {
+            return [
+                'id' => $chatRoom->id,
+                'name' => $chatRoom->name,
+                'logo' => $chatRoom->logo,
+                'created_at' => $chatRoom->created_at,
+            ];
+        })->toArray();
     }
 
     public function render()

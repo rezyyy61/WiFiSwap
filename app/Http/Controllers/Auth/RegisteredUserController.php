@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\ProfileUser;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -41,6 +42,17 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
             'ip' => $request->ip(),
             'useragent' => $request->header('User-Agent'),
+        ]);
+
+        $randomColor = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
+
+        $profileUser = ProfileUser::create([
+            'user_id' => $user->id,
+            'background_color' => $randomColor,
+            'profile_image' => null,
+            'accountId' => null,
+            'bio' => null,
+            'phone' => null,
         ]);
 
         event(new Registered($user));

@@ -7,13 +7,13 @@
                 @foreach($messages as $message)
                     <div class="flex flex-col mt-5">
                         @if($message['sender_id'] === Auth::id())
-{{--                            <div class="flex justify-end mb-4">--}}
-{{--                                <div--}}
-{{--                                    class="mr-2 py-3 px-4 bg-gradient-to-r from-blue-400 to-blue-500 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white shadow-md"--}}
-{{--                                >--}}
-{{--                                    {{ $message['message'] }}--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
+                            <div class="flex justify-end mb-4">
+                                <div
+                                    class="mr-2 py-3 px-4 bg-gradient-to-r from-blue-400 to-blue-500 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white shadow-md"
+                                >
+                                    {{ $message['message'] }}
+                                </div>
+                            </div>
                             <div class="flex justify-end gap-2.5">
                                 <div class="flex flex-col gap-1 w-full max-w-[320px]" oncontextmenu="showContextMenu(event, {{ $message['id'] }})">
                                     <div class="flex items-center space-x-2 rtl:space-x-reverse">

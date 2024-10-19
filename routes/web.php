@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Events\UserOnlineEvent;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
