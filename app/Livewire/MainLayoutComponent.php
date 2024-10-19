@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class MainLayoutComponent extends Component
 {
-    public $currentView;
+    public $currentView= 'home'; // Default tab
 
     public function showHome()
     {
@@ -17,9 +17,10 @@ class MainLayoutComponent extends Component
     {
         $this->currentView = 'chatRoom';
     }
-    public function test()
+
+    public function showChatRoomSame()
     {
-        $this->currentView = 'chatRoomSame';
+        $this->currentView = 'settings';
     }
 
     public function render()

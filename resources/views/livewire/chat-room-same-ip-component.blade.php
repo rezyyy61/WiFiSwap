@@ -1,139 +1,116 @@
 <div class="flex w-full">
-    <!-- Chat window with custom scrollbar -->
-    <div class="flex-1 px-5 flex flex-col">
-        <div class="flex flex-col h-full">
-            <div id="chatRoom"
-                 class="overflow-y-auto h-96 scrollbar-custom scrollbar-thumb-gray-400 scrollbar-track-transparent">
-                @foreach($messages as $message)
-                    <div class="flex flex-col mt-5">
-                        @if($message['sender_id'] === Auth::id())
-                            <div class="flex justify-end mb-4">
-                                <div
-                                    class="mr-2 py-3 px-4 bg-gradient-to-r from-blue-400 to-blue-500 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white shadow-md"
-                                >
-                                    {{ $message['message'] }}
-                                </div>
-                            </div>
-                            <div class="flex justify-end gap-2.5">
-                                <div class="flex flex-col gap-1 w-full max-w-[320px]" oncontextmenu="showContextMenu(event, {{ $message['id'] }})">
-                                    <div class="flex items-center space-x-2 rtl:space-x-reverse">
-                                        <span class="text-sm font-normal text-gray-500 dark:text-gray-400">{{ $message['created_at']->format('H:i') }}</span>
-                                    </div>
-                                    <div class="flex flex-col leading-1.5 p-4 border-gray-200 bg-blue-500 rounded-e-xl rounded-es-xl dark:bg-gray-700">
-                                        <p class="text-sm font-normal text-gray-900 dark:text-white">{{ $message['message'] }}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Custom context menu -->
-                            <div id="contextMenu-{{ $message['id'] }}" class="hidden z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-40 dark:bg-gray-700 dark:divide-gray-600 absolute">
-                                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownMenuIconButton">
-                                    <li>
-                                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Reply</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Forward</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Copy</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Report</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        @else
-                            <div class="flex items-start gap-2.5">
-                                <img style="background-color: {{ $message['image_background_color'] }};"
-                                     class="w-12 h-12 rounded-full" src="" alt="">
-                                <div class="flex flex-col gap-1 w-full max-w-[320px]" oncontextmenu="showContextMenu(event, {{ $message['id'] }})">
-                                    <div class="flex items-center space-x-2 rtl:space-x-reverse">
-                                        <span class="text-m font-semibold text-gray-900 ">{{ $message['user_name'] }}</span>
-                                        <span class="text-sm font-normal text-gray-500 dark:text-gray-400">{{ $message['created_at']->format('H:i') }}</span>
-                                    </div>
-                                    <div class="flex flex-col leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
-                                        <p class="text-sm font-normal text-gray-900 dark:text-white">{{ $message['message'] }}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Custom context menu -->
-                            <div id="contextMenu-{{ $message['id'] }}" class="hidden z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-40 dark:bg-gray-700 dark:divide-gray-600 absolute">
-                                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownMenuIconButton">
-                                    <li>
-                                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Reply</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Forward</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Copy</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Report</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Delete</a>
-                                    </li>
-                                </ul>
-                            </div>
-
-                        @endif
-                    </div>
-                @endforeach
+    <div class="w-full mx-auto flex flex-col">
+        <!-- Header Section -->
+        <div class="flex items-center justify-between p-4 border-b border-gray-300">
+            <div class="flex items-center space-x-3">
+                <img src="https://via.placeholder.com/40" class="w-10 h-10 rounded-full" alt="Doris Brown">
+                <span class="font-bold text-lg"></span>
+                <span class="text-green-500">&#9679;</span>
             </div>
-
-            <!-- Input area shown only for today's chat rooms -->
-            @if($isToday)
-                <div class="m-4">
-                    <form id="message-form" wire:submit.prevent="sendMessage" class="mt-4">
-                        <label for="chat" class="sr-only">Your message</label>
-                        <div class="flex items-center px-2 py-1">
-                        <textarea wire:key="message-textarea-{{ now()->timestamp }}" wire:model="message" rows="1"
-                          class="w-full bg-gray-200 py-4 px-4 rounded-xl resize-none shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-400"
-                          placeholder="Type your message..."></textarea>
-                            <button type="submit"
-                                    class="ml-2 inline-flex items-center justify-center p-3 bg-blue-500 text-white rounded-full shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
-                                <svg class="w-5 h-5 rotate-90 rtl:-rotate-90" aria-hidden="true"
-                                     xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
-                                    <path
-                                        d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z"/>
-                                </svg>
-                                <span class="sr-only">Send message</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            @endif
+            <div class="flex space-x-4">
+                <!-- Search Icon -->
+                <button class="text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </button>
+                <!-- Phone Icon -->
+                <button class="text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M3 5h6l1 9H2L3 5zm2 10h2v2H5v-2zm11 0h2v2h-2v-2z" />
+                    </svg>
+                </button>
+                <!-- Video Icon -->
+                <button class="text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M3 8h10v8H3V8z" />
+                    </svg>
+                </button>
+                <!-- Users Icon -->
+                <button class="text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M17 20h5v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2h16zM7 10a4 4 0 100-8 4 4 0 000 8zm10 0a4 4 0 100-8 4 4 0 000 8z" />
+                    </svg>
+                </button>
+                <!-- Ellipsis Icon -->
+                <button class="text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M12 6.75a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm0 7.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm0 7.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" />
+                    </svg>
+                </button>
+            </div>
         </div>
-    </div>
 
-    <!-- Chat Groups Sidebar -->
-    <div class="w-1/4 border-l-2 px-5">
-        <div class="flex flex-col">
-            <div class="font-semibold text-xl py-4">Groups</div>
-            @foreach($chatRooms as $chatRoom)
-                <div class="flex flex-row py-4 px-2 items-center border-b-2">
-                    <div class="w-1/4">
-                        <img
-                            wire:click="selectChatRoom({{ $chatRoom['id'] }})"
-                            style="background-color: {{ $chatRoom['logo'] }};"
-                            src="#"
-                            class="object-cover h-12 w-12 rounded-full cursor-pointer"
-                            alt=""
-                        />
+        <!-- Chat Section -->
+        <div class="flex-grow overflow-y-auto p-6 space-y-4 w-full">
+            @foreach($messages as $message)
+                <!-- Other user's message (left side with image) -->
+                @if($message['sender_id'] !== Auth::id() && !empty($message['message']))
+                    <div class="flex items-start space-x-3">
+                        <img src="https://via.placeholder.com/40" class="w-10 h-10 rounded-full" alt="Patricia Smith">
+                        <div class="bg-red-200 p-3 rounded-lg max-w-3xl text-black">
+                            <p>{{ $message['message'] }}</p>
+                            <span class="text-xs text-gray-500">{{ $message['created_at']->format('H:i') }}</span>
+                        </div>
                     </div>
-                    <div class="w-full">
-                        <div
-                            wire:click="selectChatRoom({{ $chatRoom['id'] }})"
-                            class="text-lg font-semibold cursor-pointer">{{ $chatRoom['name'] }}</div>
-                        <span class="text-gray-500">{{ $chatRoom['created_at'] }}</span>
+                @endif
+
+                <!-- Current user's message (right side without image) -->
+                @if($message['sender_id'] === Auth::id())
+                    <div class="flex items-start justify-end space-x-3">
+                        <div class="bg-blue-100 p-3 rounded-lg text-black max-w-3xl">
+                            <p>{{ $message['message'] }}</p>
+                            <span class="text-xs text-gray-500">{{ $message['created_at']->format('H:i') }}</span>
+                        </div>
                     </div>
-                </div>
+                @endif
             @endforeach
+        </div>
+
+        <!-- Input Section -->
+        <div class="">
+            @if($isToday)
+            <form id="message-form" wire:submit.prevent="sendMessage" class="border-t border-gray-300 p-4 flex items-center space-x-4">
+            <input wire:key="message-textarea-{{ now()->timestamp }}" wire:model="message" type="text" placeholder="Enter Message..."
+                   class="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+            <!-- Paperclip Icon -->
+            <button class="text-blue-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.25 9.75l-6 6M9 15.25l-6-6" />
+                </svg>
+            </button>
+
+            <!-- Smile Icon -->
+            <button class="text-blue-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M12 14.5c1.19 0 2.194.314 2.977.825.768.501 1.223 1.184 1.223 1.675 0 .765-.618 1.5-1.365 1.5-2.03 0-3.835-1.04-3.835-3.5z" />
+                </svg>
+            </button>
+
+            <!-- Paper Plane Icon -->
+            <button class="bg-blue-500 text-white p-2 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M21.75 11.25l-9.5 9.5M21.75 11.25l-9.5-9.5M21.75 11.25H7.25m0 9.5L15 12.5" />
+                </svg>
+            </button>
+            </form>
+            @endif
         </div>
     </div>
 </div>
