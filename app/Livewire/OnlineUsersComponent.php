@@ -51,7 +51,6 @@ class OnlineUsersComponent extends Component
                 ];
             })->toArray();
 
-            UserOnlineEvent::dispatch($this->onlineUsers);
         }
     }
 
@@ -65,13 +64,6 @@ class OnlineUsersComponent extends Component
         return [
             "echo:online-users,UserOnlineEvent" => "listenForUser"
         ];
-    }
-
-    public function listenForUser($event): void
-    {
-        Log::info('listenForUser triggered'); // Check if the listener is triggered
-        Log::info('Received event', ['event' => $event]); // Log the event
-        $this->onlineUsers = $event['onlineUsers'] ?? [];
     }
 
     public function createChatRoom(): void

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class MainLayoutComponent extends Component
@@ -23,8 +24,13 @@ class MainLayoutComponent extends Component
         $this->currentView = 'settings';
     }
 
+    public function notification()
+    {
+        $this->currentView = 'notification';
+    }
+
     public function render()
     {
-        return view('livewire.main-layout-component');
+        return view('livewire.main-layout-component', ['name'=> Auth::user()->name]);
     }
 }

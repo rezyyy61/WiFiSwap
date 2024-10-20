@@ -16,4 +16,21 @@ class Message extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function sender()
+    {
+        return $this->belongsTo(User::class, 'sender_id');
+    }
+
+    // Relationship to the receiver (user)
+    public function receiver()
+    {
+        return $this->belongsTo(User::class, 'receiver_id');
+    }
+
+    // If you have a ChatRoom model for the chat rooms
+    public function chatRoom()
+    {
+        return $this->belongsTo(ChatRoom::class, 'chat_room_id');
+    }
 }

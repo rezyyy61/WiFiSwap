@@ -52,7 +52,7 @@
         </div>
 
         <!-- Chat Section -->
-        <div class="flex-grow overflow-y-auto p-6 space-y-4 w-full">
+        <div class="flex-grow overflow-y-auto p-6 space-y-4 w-full bg-[#fedcdb33]">
             @foreach($messages as $message)
                 <!-- Other user's message (left side with image) -->
                 @if($message['sender_id'] !== Auth::id() && !empty($message['message']))

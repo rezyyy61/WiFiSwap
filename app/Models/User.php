@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -51,9 +52,15 @@ class User extends Authenticatable
         ];
     }
 
-    public function messages(): HasMany
+    public function sentMessages()
     {
-        return $this->hasMany(Message::class);
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    // Relationship to Messages (one-to-many, received messages)
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
     }
 
     public function chatRooms(): HasMany
@@ -64,6 +71,27 @@ class User extends Authenticatable
     public function profile(): HasOne
     {
         return $this->hasOne(ProfileUser::class, 'user_id', 'id');
+    }
+
+    // Friends where the user sent the friend request
+    public function friends(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'friendships', 'user_id', 'friend_id')
+            ->wherePivot('status', 'accepted');
+    }
+
+    // Friends where the user received the friend request
+    public function friendRequestsReceived(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'friendships', 'friend_id', 'user_id')
+            ->wherePivot('status', 'pending');
+    }
+
+    // Friend requests sent by the user
+    public function friendRequestsSent(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'friendships', 'user_id', 'friend_id')
+            ->wherePivot('status', 'pending');
     }
 
 }

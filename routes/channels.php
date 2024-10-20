@@ -12,6 +12,7 @@ Broadcast::channel('chatRoomSameIp.{chatRoom_id}', function ($user, $chatRoomId)
     return ChatRoom::where('id', $chatRoomId)->where('ip', $user->ip)->exists();
 });
 
-//Broadcast::channel('online-users', function () {
-//    return Auth::check();
-//});
+Broadcast::channel('chat.{id}', function () {
+    return Auth::check();
+});
+
