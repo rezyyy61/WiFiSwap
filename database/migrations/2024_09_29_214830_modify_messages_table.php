@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('chat_room_id')->after('sender_id')->nullable();
             $table->string('ip')->after('message')->nullable();
             $table->text('useragent')->after('ip')->nullable();
+            $table->boolean('is_seen')->default(false)->after('message')->nullable();
         });
     }
 
@@ -28,6 +29,7 @@ return new class extends Migration
             $table->dropColumn('receiver_id');
             $table->dropColumn('ip');
             $table->dropColumn('useragent');
+            $table->dropColumn('is_seen');
         });
     }
 };

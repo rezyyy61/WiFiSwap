@@ -40,4 +40,13 @@ class PrivateChatEvent implements ShouldBroadcastNow
             new PrivateChannel('chat.' . $this->receiver_id),
         ];
     }
+
+    public function broadcastWith()
+    {
+        return [
+            'message' => $this->message,
+        ];
+    }
+
+
 }

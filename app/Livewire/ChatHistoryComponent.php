@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Events\PrivateChatEvent;
 use App\Models\Friendship;
+use App\Models\Message;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -11,7 +12,42 @@ use Livewire\Component;
 class ChatHistoryComponent extends Component
 {
     public $friends = [];
+    public $latestMessage;
     public $selectedFriendId = null;
+
+    protected $listeners = [
+        "echo-private:chat.{authUserId},PrivateChatEvent" => 'listenForMessage',
+    ];
+
+    public function getAuthUserIdProperty()
+    {
+        return Auth::id();
+    }
+
+    public function listenForMessage($event): void
+    {
+        $this->latestMessage = $event['message'];
+
+        // Find the friend that the message belongs to and update the latest message
+        foreach ($this->friends as &$friend) {
+            if ($friend['id'] == $event['message']['sender_id']) {
+                // Update the latest message content and time
+                $friend['latest_message'] = $event['message']['message'];
+                $friend['latest_message_time'] = \Carbon\Carbon::parse($event['message']['created_at'])->diffForHumans();
+
+                // If the message is from a different friend (not currently selected), increment unread count
+                if ($friend['id'] !== $this->selectedFriendId) {
+                    $friend['unread_count'] += 1;  // Increment unread count
+                } else {
+                    // If the user is selected, mark the message as read immediately
+                    Message::where('id', $event['message']['id'])->update(['is_seen' => true]);
+                }
+            }
+        }
+
+        $this->dispatch('unreadMessagesUpdated');
+    }
+
     public function mount()
     {
         $this->fetchFriends();
@@ -20,16 +56,15 @@ class ChatHistoryComponent extends Component
     public function fetchFriends()
     {
         $friendships = Friendship::where(function ($query) {
-            // Authenticated user can be either the 'user_id' or 'friend_id'
             $query->where('friend_id', Auth::id())
                 ->orWhere('user_id', Auth::id());
         })
-            ->where('status', 'accepted') // Only accepted friendships
+            ->where('status', 'accepted')
             ->with([
                 'user' => function ($query) {
                     $query->with('profile');
                 },
-                'friend' => function ($query) { // Ensure we load the 'friend' relationship as well
+                'friend' => function ($query) {
                     $query->with('profile');
                 },
                 'user.sentMessages' => function ($query) {
@@ -45,17 +80,19 @@ class ChatHistoryComponent extends Component
 
         foreach ($friendships as $friendship) {
             if ($friendship->user_id == Auth::id()) {
-                // If authenticated user is 'user', then the 'friend' is the friend
                 $friend = $friendship->friend;
             } else {
-                // If authenticated user is 'friend', then the 'user' is the friend
                 $friend = $friendship->user;
             }
 
-            // Fetch the latest message (from either user or friend)
             $latestMessage = $friend->sentMessages->first();
 
-            // Add the friend to the list
+            // Count unread messages for this friend
+            $unreadCount = Message::where('sender_id', $friend->id)
+                ->where('receiver_id', Auth::id())
+                ->where('is_seen', false)
+                ->count();
+
             $this->friends[] = [
                 'id' => $friend->id,
                 'name' => $friend->name,
@@ -64,6 +101,7 @@ class ChatHistoryComponent extends Component
                 'bio' => $friend->profile->bio ?? '',
                 'latest_message' => $latestMessage->message ?? 'No messages',
                 'latest_message_time' => $latestMessage ? $latestMessage->created_at->diffForHumans() : null,
+                'unread_count' => $unreadCount,
             ];
         }
     }
@@ -71,7 +109,23 @@ class ChatHistoryComponent extends Component
     public function selectUser($userId, $name)
     {
         $this->selectedUser = ['id' => $userId, 'name' => $name];
-        $this->dispatch('userSelected', $this->selectedUser);
+        $this->selectedFriendId = $userId;
+
+        Message::where('sender_id', $userId)
+            ->where('receiver_id', Auth::id())
+            ->where('is_seen', false)
+            ->update(['is_seen' => true]);
+
+        // Reset unread count for this friend
+        foreach ($this->friends as &$friend) {
+            if ($friend['id'] == $userId) {
+                $friend['unread_count'] = 0;
+            }
+        }
+
+        $this->dispatch('unreadMessagesUpdated');
+        $this->dispatch('userSelected', $this->selectedUser)->to('private-chat-component');
+
     }
 
     public function render()
