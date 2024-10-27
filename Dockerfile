@@ -44,3 +44,4 @@ EXPOSE 9000
 
 # Start PHP-FPM server and Reverb
 CMD ["php-fpm"]
+

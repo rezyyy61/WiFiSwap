@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\ChatRoom;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
