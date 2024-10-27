@@ -12,7 +12,13 @@ Broadcast::channel('chatRoomSameIp.{chatRoom_id}', function ($user, $chatRoomId)
     return ChatRoom::where('id', $chatRoomId)->where('ip', $user->ip)->exists();
 });
 
-Broadcast::channel('chat.{id}', function () {
-    return Auth::check();
+// Private channel for chat
+Broadcast::channel('chat.{userId}', function ($user, $userId) {
+    return (int) $user->id === (int) $userId;
 });
+
+Broadcast::channel('typing.{receiverId}', function ($user, $receiverId) {
+    return (int) $user->id === (int) $receiverId || (int) $user->id !== null;
+});
+
 

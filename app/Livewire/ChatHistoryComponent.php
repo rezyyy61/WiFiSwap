@@ -111,10 +111,17 @@ class ChatHistoryComponent extends Component
         $this->selectedUser = ['id' => $userId, 'name' => $name];
         $this->selectedFriendId = $userId;
 
-        Message::where('sender_id', $userId)
+        $unseenMessages = Message::where('sender_id', $userId)
             ->where('receiver_id', Auth::id())
             ->where('is_seen', false)
-            ->update(['is_seen' => true]);
+            ->get();
+
+        foreach ($unseenMessages as $unseenMessage) {
+            $unseenMessage->is_seen = true;
+            $unseenMessage->save();
+
+            broadcast(new PrivateChatEvent($unseenMessage->fresh(), $unseenMessage->sender_id));
+        }
 
         // Reset unread count for this friend
         foreach ($this->friends as &$friend) {
@@ -123,11 +130,14 @@ class ChatHistoryComponent extends Component
             }
         }
 
+        // Reassign the friends array to trigger reactivity
+        $this->friends = array_values($this->friends);
+
         $this->dispatch('unreadMessagesUpdated');
-        $this->dispatch('userSelected', $this->selectedUser)->to('private-chat-component');
-
+        $this->dispatch('userSelected', $this->selectedUser)->to('chat-header-component');
+        $this->dispatch('userSelected', $this->selectedUser)->to('message-input-component');
+        $this->dispatch('userSelected', $this->selectedUser)->to('messages-list-component');
     }
-
     public function render()
     {
         return view('livewire.chat-history-component');

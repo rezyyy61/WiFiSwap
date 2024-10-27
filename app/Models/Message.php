@@ -12,6 +12,10 @@ class Message extends Model
 
     protected $fillable = ['message', 'is_seen', 'sender_id', 'receiver_id', 'ip', 'user_agent'];
 
+    protected $casts = [
+        'is_seen' => 'boolean',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
