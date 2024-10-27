@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('ip')->after('remember_token')->nullable();
             $table->text('useragent')->after('ip')->nullable();
+            $table->boolean('online')->default(false)->after('remember_token')->nullable();
         });
     }
 
@@ -25,6 +26,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('ip');
             $table->dropColumn('useragent');
+            $table->dropColumn('online');
         });
     }
 };

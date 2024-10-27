@@ -16,8 +16,108 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Rezvan',
+            'email' => 'rezvan@code.com',
+            'password' => '123456789',
+            'ip' => '172.24.0.1'
         ]);
+
+        User::factory()->create([
+            'name' => 'karl',
+            'email' => 'rezvanamani@code.com',
+            'password' => '123456789',
+            'ip' => '172.24.0.1'
+        ]);
+        User::factory()->create([
+            'name' => 'adj',
+            'email' => 'rezvan1@code.com',
+            'password' => '123456789',
+            'ip' => '172.24.0.1'
+        ]);
+        User::factory()->create([
+            'name' => 'melchy',
+            'email' => 'rezvan2@code.com',
+            'password' => '123456789',
+            'ip' => '172.24.0.1'
+        ]);
+        User::factory()->create([
+            'name' => 'lia',
+            'email' => 'rezvan3@code.com',
+            'password' => '123456789',
+            'ip' => '172.24.0.1'
+        ]);
+        User::factory()->create([
+            'name' => 'moo',
+            'email' => 'rezvan4@code.com',
+            'password' => '123456789',
+            'ip' => '172.24.0.1'
+        ]);
+        User::factory()->create([
+            'name' => 'raha',
+            'email' => 'rezvan5@code.com',
+            'password' => '123456789',
+            'ip' => '172.24.0.1'
+        ]);
+        User::factory()->create([
+            'name' => 'saro',
+            'email' => 'rezvan6@code.com',
+            'password' => '123456789',
+            'ip' => '172.24.0.1'
+        ]);
+        User::factory()->create([
+            'name' => 'saro',
+            'email' => 'rezvan7@code.com',
+            'password' => '123456789',
+            'ip' => '172.24.0.1'
+        ]);
+        User::factory()->create([
+            'name' => 'saro',
+            'email' => 'rezvan8@code.com',
+            'password' => '123456789',
+            'ip' => '172.24.0.1'
+        ]);
+        User::factory()->create([
+            'name' => 'saro',
+            'email' => 'rezvan9@code.com',
+            'password' => '123456789',
+            'ip' => '172.24.0.1'
+        ]);
+        User::factory()->create([
+            'name' => 'saro',
+            'email' => 'rezvan10@code.com',
+            'password' => '123456789',
+            'ip' => '172.24.0.1'
+        ]);
+        User::factory()->create([
+            'name' => 'saro',
+            'email' => 'rezvan11@code.com',
+            'password' => '123456789',
+            'ip' => '172.24.0.1'
+        ]);
+        User::factory()->create([
+            'name' => 'saro',
+            'email' => 'rezvan12@code.com',
+            'password' => '123456789',
+            'ip' => '172.24.0.1'
+        ]);
+        User::factory()->create([
+            'name' => 'saro',
+            'email' => 'rezvan13@code.com',
+            'password' => '123456789',
+            'ip' => '172.24.0.1'
+        ]);
+        User::factory()->create([
+            'name' => 'saro',
+            'email' => 'rezvan14@code.com',
+            'password' => '123456789',
+            'ip' => '172.24.0.1'
+        ]);
+        User::factory()->create([
+            'name' => 'saro',
+            'email' => 'rezvan15@code.com',
+            'password' => '123456789',
+            'ip' => '172.24.0.1'
+        ]);
+
     }
 }
