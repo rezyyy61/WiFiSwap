@@ -7,16 +7,20 @@ use App\Models\Friendship;
 use App\Models\Message;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 
 class ChatHistoryComponent extends Component
 {
     public $friends = [];
     public $latestMessage;
+    public $receiverId;
+    public $isTyping = false;
     public $selectedFriendId = null;
 
     protected $listeners = [
         "echo-private:chat.{authUserId},PrivateChatEvent" => 'listenForMessage',
+        "echo-private:typing.{authUserId},UserTypingEvent" => 'handleTypingEvent',
     ];
 
     public function getAuthUserIdProperty()
@@ -137,6 +141,19 @@ class ChatHistoryComponent extends Component
         $this->dispatch('userSelected', $this->selectedUser)->to('chat-header-component');
         $this->dispatch('userSelected', $this->selectedUser)->to('message-input-component');
         $this->dispatch('userSelected', $this->selectedUser)->to('messages-list-component');
+    }
+
+    public function handleTypingEvent($event): void
+    {
+        try {
+            $senderId = $event['senderId'];
+            $isTyping = $event['isTyping'];
+
+            $this->isTyping[$senderId] = $isTyping;
+
+        } catch (\Exception $e) {
+            Log::error('Error in handleTypingEvent: ' . $e->getMessage());
+        }
     }
     public function render()
     {

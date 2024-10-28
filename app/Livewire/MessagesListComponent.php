@@ -13,7 +13,7 @@ class MessagesListComponent extends Component
 {
     public $messages = [];
     public $receiverId;
-    public $isTyping = false;
+    public $isTyping = [];
 
     protected $listeners = [
         'userSelected' => 'loadUserChat',
@@ -105,13 +105,17 @@ class MessagesListComponent extends Component
 
     public function handleTypingEvent($event): void
     {
-        Log::info('Received UserTypingEvent', $event);
-
-        if ($event['senderId'] == $this->receiverId) {
-            $this->dispatch('scrollDown');
-            $this->isTyping = $event['isTyping'];
+        try {
+            if ($event['senderId'] == $this->receiverId) {
+                $this->dispatch('scrollDown');
+                $this->isTyping[$event['senderId']] = $event['isTyping'];
+                $this->dispatchSelf('refreshComponent'); // Ensure Livewire reactivity for typing
+            }
+        } catch (\Exception $e) {
+            Log::error('Error in handleTypingEvent: ' . $e->getMessage());
         }
     }
+
 
 
     public function render()
