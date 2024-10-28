@@ -1,7 +1,7 @@
 <div class="rounded-lg shadow-lg h-screen " style="background-color: #f4fbf9;">
     <h1 class="m-4 font-bold text-2xl" style="color: #1A5319; font-family: 'Helvetica Neue', sans-serif;">Chats</h1>
     <!-- Search Form -->
-    <form class="flex items-center max-w-sm mx-auto bg-[#CAEDDF] mb-4 rounded-md mx-6">
+    <form class="flex items-center max-w-sm mx-auto bg-[#CAEDDF] mb-4 rounded-md">
         <label for="simple-search" class="sr-only">Search</label>
         <div class="relative w-full">
             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -53,14 +53,17 @@
 
                     <div class="ml-4 flex-1">
                         <p class="text-base font-semibold text-[#1A5319] font-poppins">{{ $friend['name'] }}</p>
-                        <p class="text-sm font-poppins {{ $friend['id'] == $selectedFriendId ? 'text-[#508D4E]' : 'text-[#6B7280]' }}">
+                        <p class="text-sm font-poppins animate-pulse {{ $friend['id'] == $selectedFriendId ? 'text-[#508D4E]' : 'text-[#6B7280]' }}">
                             @if($friend['id'] == $selectedFriendId)
                                 Chatting now...
+                            @elseif($friend['id'] !== $selectedFriendId && isset($isTyping[$friend['id']]) && $isTyping[$friend['id']])
+                            <em>typing...</em>
                             @else
                                 {{ $friend['latest_message'] }}
                             @endif
                         </p>
                     </div>
+
 
                     <div class="text-right relative flex flex-col items-end">
                         <!-- Message Time -->
