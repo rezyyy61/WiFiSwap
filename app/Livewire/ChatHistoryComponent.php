@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Events\PrivateChatEvent;
 use App\Models\Friendship;
 use App\Models\Message;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
@@ -55,6 +54,7 @@ class ChatHistoryComponent extends Component
     public function mount()
     {
         $this->fetchFriends();
+        $this->selectUser('save', 'Save Messages');
     }
 
     public function fetchFriends()
@@ -155,6 +155,7 @@ class ChatHistoryComponent extends Component
             Log::error('Error in handleTypingEvent: ' . $e->getMessage());
         }
     }
+
     public function render()
     {
         return view('livewire.chat-history-component');

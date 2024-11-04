@@ -1,10 +1,10 @@
 <!-- Chat Section -->
-<div id="chatRoom" class="flex-grow overflow-y-auto p-6 space-y-4 w-full bg-[#fedcdb33]">
+<div id="messagesContainer" class="flex-grow overflow-y-auto h-full p-6 space-y-4 w-full bg-[#fedcdb33]">
     @foreach($messages as $message)
         <!-- Other user's message (left side with image) -->
         @if($message['sender_id'] !== Auth::id() && !empty($message['message']))
             <div wire:key="message-{{ $message['id'] }}" class="flex items-start space-x-3">
-                <img src="https://via.placeholder.com/40" class="w-8 h-8 rounded-full" alt="">
+                <img src="https://cataas.com/cat" class="w-8 h-8 rounded" alt="">
                 <div class="bg-[#2AB57D] p-2 rounded-lg max-w-3xl text-white font-bold px-4">
                     <p>{{ $message['message'] }}</p>
                     <span class="text-xs text-gray-300">{{ \Carbon\Carbon::parse($message['created_at'])->format('H:i') }}</span>
@@ -53,9 +53,10 @@
 
 <script>
     window.addEventListener('scrollDown', () => {
-        let container = document.querySelector('#chatRoom');
+        let container = document.querySelector('#messagesContainer');
         setTimeout(() => {
             container.scrollTop = container.scrollHeight;
         }, 100);
     });
 </script>
+

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Events\PrivateChatEvent;
 use App\Models\Friendship;
 use App\Models\Message;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +14,10 @@ class MainLayoutComponent extends Component
     public $unreadCount;
     public $currentView= 'home';
 
-    protected $listeners = ['unreadMessagesUpdated' => 'fetchUnreadMessagesCount'];
+    protected $listeners = [
+        'unreadMessagesUpdated' => 'fetchUnreadMessagesCount',
+    ];
+
 
     public function mount()
     {
@@ -69,12 +73,11 @@ class MainLayoutComponent extends Component
 
     public function render()
     {
-        return view('livewire.main-layout-component',
-            [
-                'name'=> Auth::user()->name,
-                'notifications' => $this->notifications,
-                'unreadCount' => $this->unreadCount,
-            ]
-        );
+
+        return view('livewire.main-layout-component', [
+            'name' => Auth::user()->name,
+            'notifications' => $this->notifications,
+            'unreadCount' => $this->unreadCount,
+        ]);
     }
 }

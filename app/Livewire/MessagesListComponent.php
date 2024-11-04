@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Events\PrivateChatEvent;
-use App\Events\UserTypingEvent;
 use App\Models\Message;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -30,9 +29,9 @@ class MessagesListComponent extends Component
 
     public function loadUserChat($userId): void
     {
-        $this->dispatch('scrollDown');
         $this->receiverId = $userId['id'];
         $this->loadMessages();
+        $this->dispatch('scrollDown');
     }
 
     public function loadMessages()
