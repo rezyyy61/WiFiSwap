@@ -2,19 +2,24 @@
 
 namespace App\Livewire;
 
+use App\Models\User;
 use Livewire\Component;
 
 class ChatHeaderComponent extends Component
 {
-    public $receiverName = '';
     public $receiverId;
+    public $receiverName;
 
-    protected $listeners = ['userSelected' => 'updateHeader'];
-
-    public function updateHeader($userData)
+    public function mount($receiverId)
     {
-        $this->receiverName = $userData['name'];
-        $this->receiverId = $userData['id'];
+        $this->receiverId = $receiverId;
+        $this->loadReceiverDetails();
+    }
+
+    public function loadReceiverDetails()
+    {
+        $receiver = User::find($this->receiverId);
+        $this->receiverName = $receiver ? $receiver->name : 'Unknown User';
     }
 
     public function render()

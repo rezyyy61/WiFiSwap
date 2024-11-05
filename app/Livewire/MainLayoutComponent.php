@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Events\PrivateChatEvent;
 use App\Models\Friendship;
 use App\Models\Message;
 use Illuminate\Support\Facades\Auth;
@@ -12,22 +11,26 @@ class MainLayoutComponent extends Component
 {
     public $notifications = [];
     public $unreadCount;
-    public $currentView= 'home';
+    public $currentView= null;
+    public $currentMiddleView = 'chatHistory';
+    public $selectedFriendId = null;
+
 
     protected $listeners = [
         'unreadMessagesUpdated' => 'fetchUnreadMessagesCount',
+        'userSelected' => 'onUserSelected'
     ];
 
+    public function onUserSelected($userId)
+    {
+        $this->selectedFriendId = $userId;
+        $this->currentView = 'home';
+    }
 
     public function mount()
     {
         $this->fetchNotifications();
         $this->fetchUnreadMessagesCount();
-    }
-
-    public function showHome()
-    {
-        $this->currentView = 'home';
     }
 
     public function showChatRoom()
@@ -38,6 +41,16 @@ class MainLayoutComponent extends Component
     public function showChatRoomSame()
     {
         $this->currentView = 'settings';
+    }
+
+    public function showMiddleViewHistory()
+    {
+        $this->currentMiddleView = 'chatHistory';
+    }
+
+    public function showMiddleViewSameIp()
+    {
+        $this->currentMiddleView = 'chatRoomSameIp';
     }
 
     public function notification()

@@ -65,7 +65,7 @@
             <div class="relative flex items-center space-x-3">
                 <!-- Friend Profile Image -->
                 <img class="w-10 h-10 rounded" src="https://cataas.com/cat" alt="">
-                <span class="font-bold text-lg text-white">{{ $receiverName ?? 'Select a User' }}</span>
+                <span class="font-bold text-lg text-white">{{ $receiverName }}</span>
             </div>
 
             <div class='flex items-center max-sm:ml-auto bg-[#2e2e48]'>

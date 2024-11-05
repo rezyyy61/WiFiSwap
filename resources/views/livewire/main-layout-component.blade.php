@@ -6,12 +6,12 @@
             <ul class="my-12 flex flex-col space-y-10 flex-1">
                 <li
                     class="w-12 h-12 flex items-center justify-center cursor-pointer text-xl text-white font-semibold bg-[#ff7979] rounded-lg
-                        @if($currentView === 'home')
+                        @if($currentMiddleView === 'chatHistory')
                         text-black
                     @else
                         text-gray-400
                     @endif"
-                    wire:click="showHome">
+                    wire:click="showMiddleViewHistory">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                          stroke="currentColor"
                          class="w-6">
@@ -19,21 +19,21 @@
                               d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/>
                     </svg>
 
-                    @if($unreadCount > 0)
-                        <div
-                            class="absolute top-1 right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                            {{$unreadCount}}
-                        </div>
-                    @endif
+{{--                    @if($unreadCount > 0)--}}
+{{--                        <div--}}
+{{--                            class="absolute top-1 right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">--}}
+{{--                            {{$unreadCount}}--}}
+{{--                        </div>--}}
+{{--                    @endif--}}
                 </li>
                 <li
                     class="w-12 h-12 flex items-center justify-center cursor-pointer text-xl text-white font-semibold bg-[#c95eff] rounded-lg
-                          @if($currentView === 'chatRoom')
+                          @if($currentMiddleView === 'chatRoomSameIp')
                         text-black
                     @else
                         text-gray-400
                     @endif"
-                    wire:click="showChatRoom">
+                    wire:click="showMiddleViewSameIp">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                          stroke="currentColor"
                          class="w-6">
@@ -65,23 +65,25 @@
             <img src="https://readymadeui.com/readymadeui-white.svg" alt="logo" class='w-[160px]' />
         </a>
 
-        @if($currentView === 'home')
+        @if($currentMiddleView === 'chatHistory')
             <livewire:ChatHistoryComponent/>
-        @elseif($currentView === 'chatRoom')
+        @elseif($currentMiddleView === 'chatRoomSameIp')
             <livewire:OnlineUsersComponent/>
-        @elseif($currentView === 'notification')
+        @elseif($currentMiddleView === 'notification')
             <livewire:Notification/>
         @endif
     </div>
 
     <!-- Right column for the chat UI, hidden on smaller screens -->
-    <div class="bg-white  h-full flex flex-col w-full items-center rounded-tr-2xl hidden md:flex">
-        @if($currentView === 'home')
-            <livewire:PrivateChatComponent/>
-        @elseif($currentView === 'chatRoom')
-            <livewire:ChatRoomSameIpComponent/>
-        @elseif($currentView === 'notification')
-            <livewire:ProfileLayouteComponent/>
+    <div class="bg-white h-full flex flex-col w-full items-center rounded-tr-2xl hidden md:flex">
+        @if($currentView)
+            @if($currentView === 'home')
+                <livewire:private-chat-component :receiverId="$selectedFriendId" :key="'private-chat-'.$selectedFriendId"/>
+            @elseif($currentView === 'chatRoom')
+                <livewire:ChatRoomSameIpComponent/>
+            @elseif($currentView === 'notification')
+                <livewire:ProfileLayouteComponent/>
+            @endif
         @else
             <div class="flex items-center justify-center h-full w-full">
                 <p class="text-gray-500 text-lg">Please select a user to start chatting.</p>
@@ -89,3 +91,24 @@
         @endif
     </div>
 </div>
+<script>
+    window.addEventListener('scrollDown', () => {
+        let container = document.querySelector('#messagesContainer');
+        if (container) {
+            setTimeout(() => {
+                container.scrollTop = container.scrollHeight;
+            }, 100);
+        } else {
+            console.log('messagesContainer not found');
+        }
+    });
+
+
+    window.addEventListener('clearMessageInput', () => {
+        const inputField = document.querySelector('#message');
+        if (inputField) {
+            inputField.value = '';
+        }
+    });
+</script>
+
