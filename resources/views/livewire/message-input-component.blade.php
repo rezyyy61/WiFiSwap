@@ -1,5 +1,22 @@
-<div class="">
-    <form id="message-form" wire:submit.prevent="sendMessage" class="border-t border-gray-300 p-4 flex items-center space-x-4">
+<div id="messagesContainer" class="flex items-center w-full p-4 bg-gray-100 rounded-lg  space-x-2">
+    <form wire:submit.prevent="sendMessage" class="flex items-center w-full p-4 bg-gray-100 rounded-lg space-x-2">
+        <!-- Sticker Button -->
+        <button type="button" class="p-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+                <path d="M16.5 10.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm-6 0a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM12 14.75c1.5 0 4 0.75 4 2.25H8c0-1.5 2.5-2.25 4-2.25z" fill="#000"/>
+            </svg>
+        </button>
+
+        <!-- File/Image Upload Button -->
+        <label class="p-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
+            <input type="file" class="hidden" accept="image/*, .pdf, .doc, .docx" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" />
+            </svg>
+        </label>
+
+        <!-- Text Input -->
         <input
             id="message"
             wire:model.live="message"
@@ -7,52 +24,22 @@
             name="message"
             placeholder="Enter Message..."
             wire:keydown.enter="sendMessage"
-            class="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+            class="flex-1 p-2 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+        />
 
-        <!-- Paperclip Icon -->
-        <button type="button" class="text-blue-500" title="Attach File">
-            <!-- SVG Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                 stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.25 9.75l-6 6M9 15.25l-6-6"/>
+        <!-- Voice Button -->
+        <button type="button" class="p-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 3a3 3 0 00-3 3v6a3 3 0 106 0V6a3 3 0 00-3-3zM7 11.25V12c0 2.76 2.24 5 5 5s5-2.24 5-5v-.75M8.5 19h7m-7-1v1m7-1v1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </button>
 
-        <!-- Smile Icon -->
-        <button type="button" class="text-blue-500" title="Emoji">
-            <!-- SVG Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                 stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M12 14.5c1.19 0 2.194.314 2.977.825.768.501 1.223 1.184 1.223 1.675 0 .765-.618 1.5-1.365 1.5-2.03 0-3.835-1.04-3.835-3.5z"/>
-            </svg>
-        </button>
-
-        <!-- Send Icon -->
-        <button
-            type="submit" class="bg-blue-500 text-white p-2 rounded-full" title="Send">
-            <!-- SVG Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                 stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M21.75 11.25l-9.5 9.5M21.75 11.25l-9.5-9.5M21.75 11.25H7.25m0 9.5L15 12.5"/>
+        <!-- Send Button -->
+        <button type="submit" class="p-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7-7 7M5 12h16" />
             </svg>
         </button>
     </form>
 </div>
 
-<script>
-    window.addEventListener('scrollDown', () => {
-        let container = document.querySelector('#chatRoom');
-        setTimeout(() => {
-            container.scrollTop = container.scrollHeight;
-        }, 100);
-    });
-
-    window.addEventListener('clearMessageInput', () => {
-        const inputField = document.querySelector('#message');
-        if (inputField) {
-            inputField.value = '';
-        }
-    });
-</script>

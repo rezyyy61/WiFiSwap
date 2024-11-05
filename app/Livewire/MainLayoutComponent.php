@@ -11,19 +11,26 @@ class MainLayoutComponent extends Component
 {
     public $notifications = [];
     public $unreadCount;
-    public $currentView= 'home';
+    public $currentView= null;
+    public $currentMiddleView = 'chatHistory';
+    public $selectedFriendId = null;
 
-    protected $listeners = ['unreadMessagesUpdated' => 'fetchUnreadMessagesCount'];
+
+    protected $listeners = [
+        'unreadMessagesUpdated' => 'fetchUnreadMessagesCount',
+        'userSelected' => 'onUserSelected'
+    ];
+
+    public function onUserSelected($userId)
+    {
+        $this->selectedFriendId = $userId;
+        $this->currentView = 'home';
+    }
 
     public function mount()
     {
         $this->fetchNotifications();
         $this->fetchUnreadMessagesCount();
-    }
-
-    public function showHome()
-    {
-        $this->currentView = 'home';
     }
 
     public function showChatRoom()
@@ -34,6 +41,16 @@ class MainLayoutComponent extends Component
     public function showChatRoomSame()
     {
         $this->currentView = 'settings';
+    }
+
+    public function showMiddleViewHistory()
+    {
+        $this->currentMiddleView = 'chatHistory';
+    }
+
+    public function showMiddleViewSameIp()
+    {
+        $this->currentMiddleView = 'chatRoomSameIp';
     }
 
     public function notification()
@@ -69,12 +86,11 @@ class MainLayoutComponent extends Component
 
     public function render()
     {
-        return view('livewire.main-layout-component',
-            [
-                'name'=> Auth::user()->name,
-                'notifications' => $this->notifications,
-                'unreadCount' => $this->unreadCount,
-            ]
-        );
+
+        return view('livewire.main-layout-component', [
+            'name' => Auth::user()->name,
+            'notifications' => $this->notifications,
+            'unreadCount' => $this->unreadCount,
+        ]);
     }
 }

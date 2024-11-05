@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Events\PrivateChatEvent;
 use App\Models\Friendship;
 use App\Models\Message;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
@@ -15,6 +14,7 @@ class ChatHistoryComponent extends Component
     public $friends = [];
     public $latestMessage;
     public $receiverId;
+    public $selectedUser = null;
     public $isTyping = false;
     public $selectedFriendId = null;
 
@@ -138,9 +138,7 @@ class ChatHistoryComponent extends Component
         $this->friends = array_values($this->friends);
 
         $this->dispatch('unreadMessagesUpdated');
-        $this->dispatch('userSelected', $this->selectedUser)->to('chat-header-component');
-        $this->dispatch('userSelected', $this->selectedUser)->to('message-input-component');
-        $this->dispatch('userSelected', $this->selectedUser)->to('messages-list-component');
+        $this->dispatch('userSelected', $userId)->to('main-layout-component');
     }
 
     public function handleTypingEvent($event): void
@@ -155,6 +153,7 @@ class ChatHistoryComponent extends Component
             Log::error('Error in handleTypingEvent: ' . $e->getMessage());
         }
     }
+
     public function render()
     {
         return view('livewire.chat-history-component');

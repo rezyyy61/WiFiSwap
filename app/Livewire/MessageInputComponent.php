@@ -13,20 +13,12 @@ class MessageInputComponent extends Component
 {
     public $messages = [];
     public $message = '';
-    public $senderId;
     public $receiverId;
 
-    protected $listeners = [  'userSelected' => 'setReceiver'];
-
-    public function setReceiver($userData): void
-    {
-        $this->receiverId = $userData['id'];
-    }
 
     public function updatedMessage($value): void
     {
         if (!empty($value)) {
-            $this->dispatch('scrollDown');
             broadcast(new UserTypingEvent(Auth::id(), $this->receiverId, true));
         } else {
             broadcast(new UserTypingEvent(Auth::id(), $this->receiverId, false));
@@ -57,12 +49,10 @@ class MessageInputComponent extends Component
             $message->save();
 
             $this->message = '';
+            $this->dispatch('scrollDown');
             $this->dispatch('clearMessageInput');
             broadcast(new UserTypingEvent(Auth::id(), $this->receiverId, false));
-
             broadcast(new PrivateChatEvent($message, $this->receiverId));
-
-            $this->dispatch('scrollDown');
 
         } catch (\Exception $e) {
             Log::error('There was an error sending your message: ' . $e->getMessage());
