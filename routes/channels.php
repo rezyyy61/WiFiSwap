@@ -20,4 +20,8 @@ Broadcast::channel('typing.{receiverId}', function ($user, $receiverId) {
     return (int) $user->id === (int) $receiverId || (int) $user->id !== null;
 });
 
+Broadcast::channel('recording.{receiverId}', function ($user, $receiverId) {
+    return (int) $user->id === (int) $receiverId || (int) $user->id !== null;
+});
+
 

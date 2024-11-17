@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Events\PrivateChatEvent;
 use App\Models\Friendship;
 use App\Models\Message;
+use App\Models\VoiceMessage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Livewire\Component;
@@ -35,16 +36,29 @@ class ChatHistoryComponent extends Component
         // Find the friend that the message belongs to and update the latest message
         foreach ($this->friends as &$friend) {
             if ($friend['id'] == $event['message']['sender_id']) {
+                // Determine the message content based on the type
+                if ($event['type'] == 'text') {
+                    $latestMessageContent = $event['message']['message'];
+                } elseif ($event['type'] == 'voice') {
+                    $latestMessageContent = '[Voice Message]';
+                } else {
+                    $latestMessageContent = '[Unknown Message Type]';
+                }
+
                 // Update the latest message content and time
-                $friend['latest_message'] = $event['message']['message'];
+                $friend['latest_message'] = $latestMessageContent;
                 $friend['latest_message_time'] = \Carbon\Carbon::parse($event['message']['created_at'])->diffForHumans();
 
-                // If the message is from a different friend (not currently selected), increment unread count
+                // Handle unread counts and message seen status
                 if ($friend['id'] !== $this->selectedFriendId) {
                     $friend['unread_count'] += 1;  // Increment unread count
                 } else {
-                    // If the user is selected, mark the message as read immediately
-                    Message::where('id', $event['message']['id'])->update(['is_seen' => true]);
+                    // Mark the message as read immediately
+                    if ($event['type'] == 'text') {
+                        Message::where('id', $event['message']['id'])->update(['is_seen' => true]);
+                    } elseif ($event['type'] == 'voice') {
+                        VoiceMessage::where('id', $event['message']['id'])->update(['is_seen' => true]);
+                    }
                 }
             }
         }
@@ -110,7 +124,7 @@ class ChatHistoryComponent extends Component
         }
     }
 
-    public function selectUser($userId, $name)
+    public function selectUser($userId, $name): void
     {
         $this->selectedUser = ['id' => $userId, 'name' => $name];
         $this->selectedFriendId = $userId;
@@ -124,7 +138,18 @@ class ChatHistoryComponent extends Component
             $unseenMessage->is_seen = true;
             $unseenMessage->save();
 
-            broadcast(new PrivateChatEvent($unseenMessage->fresh(), $unseenMessage->sender_id));
+            broadcast(new PrivateChatEvent($unseenMessage->fresh(), $unseenMessage->sender_id, 'text'));
+        }
+        $unseenVoices = VoiceMessage::where('sender_id', $userId)
+            ->where('receiver_id', Auth::id())
+            ->where('is_seen', false)
+            ->get();
+
+        foreach ($unseenVoices as $unseenVoice) {
+            $unseenVoice->is_seen = true;
+            $unseenVoice->save();
+
+            broadcast(new PrivateChatEvent($unseenVoice->fresh(), $unseenVoice->sender_id, 'voice'));
         }
 
         // Reset unread count for this friend
