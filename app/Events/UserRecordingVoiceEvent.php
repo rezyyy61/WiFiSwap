@@ -2,31 +2,27 @@
 
 namespace App\Events;
 
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
-class PrivateChatEvent implements ShouldBroadcastNow
+class UserRecordingVoiceEvent implements ShouldBroadcastNow
 {
-    public $message;
-    public $receiver_id;
-    public $type;
-
-
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct($message, $receiver_id, $type = 'text')
+    public $senderId;
+    public $receiverId;
+    public $isRecording;
+    public function __construct($senderId, $receiverId, $isRecording)
     {
-        $this->message = $message;
-        $this->receiver_id = $receiver_id;
-        $this->type = $type;
+        $this->senderId = $senderId;
+        $this->receiverId = $receiverId;
+        $this->isRecording = $isRecording;
     }
 
     /**
@@ -37,17 +33,15 @@ class PrivateChatEvent implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('chat.' . $this->receiver_id),
-            new PrivateChannel('chat.' . $this->message->sender_id),
+            new PrivateChannel('recording.' . $this->receiverId),
         ];
     }
 
-    public function broadcastWith(): array
+    public function broadcastWith()
     {
         return [
-            'message' => $this->message->toArray(),
-            'type' => $this->type,
+            'senderId' => $this->senderId,
+            'isRecording' => $this->isRecording,
         ];
     }
-
 }

@@ -7,7 +7,6 @@
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.2",
-        "alpinejs": "^3.4.2",
         "autoprefixer": "^10.4.20",
         "axios": "^1.7.4",
         "laravel-echo": "^1.16.1",
@@ -18,6 +17,7 @@
         "vite": "^5.0"
     },
     "dependencies": {
-        "@heroicons/react": "^2.1.5"
+        "@heroicons/react": "^2.1.5",
+        "wavesurfer.js": "^7.8.9"
     }
 }

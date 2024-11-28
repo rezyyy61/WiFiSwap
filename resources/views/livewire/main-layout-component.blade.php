@@ -92,18 +92,6 @@
     </div>
 </div>
 <script>
-    window.addEventListener('scrollDown', () => {
-        let container = document.querySelector('#messagesContainer');
-        if (container) {
-            setTimeout(() => {
-                container.scrollTop = container.scrollHeight;
-            }, 100);
-        } else {
-            console.log('messagesContainer not found');
-        }
-    });
-
-
     window.addEventListener('clearMessageInput', () => {
         const inputField = document.querySelector('#message');
         if (inputField) {

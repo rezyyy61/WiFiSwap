@@ -94,4 +94,19 @@ class User extends Authenticatable
             ->wherePivot('status', 'pending');
     }
 
+    public function sentVoiceMessages(): HasMany
+    {
+        return $this->hasMany(VoiceMessage::class, 'sender_id');
+    }
+
+    public function sentMediaFiles(): HasMany
+    {
+        return $this->hasMany(mediaFile::class, 'sender_id');
+    }
+
+    public function receivedMediaFiles(): hasMany
+    {
+        return $this->hasMany(mediaFile::class, 'receiver_id');
+    }
+
 }
