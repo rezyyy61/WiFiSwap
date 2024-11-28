@@ -1,71 +1,127 @@
-<div id="messagesContainer" class="flex items-center w-full p-4 bg-gray-100 rounded-lg  space-x-2">
-    <form wire:submit.prevent="sendMessage" class="flex items-center w-full p-4 bg-gray-100 rounded-lg space-x-2">
+<div id="Container" class="flex flex-col w-full p-4 bg-gray-100 rounded-lg space-y-4">
+    <form wire:submit.prevent="sendMessage" class="flex flex-col w-full space-y-4">
         <!-- Hidden Inputs -->
-        <input type="hidden" id="audio_data" wire:model="audioData" />
-        <input type="hidden" id="audio_duration" wire:model="audioDuration" />
-
-        <!-- Sticker Button -->
-        <button type="button" class="p-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/>
-                <path d="M16.5 10.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm-6 0a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM12 14.75c1.5 0 4 0.75 4 2.25H8c0-1.5 2.5-2.25 4-2.25z" fill="#000"/>
-            </svg>
-        </button>
-
+        <input type="hidden" id="audio_data" wire:model="audioData"/>
+        <input type="hidden" id="audio_duration" wire:model="audioDuration"/>
         <!-- File/Image Upload Button -->
-        <label class="p-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
-            <input type="file" class="hidden" accept="image/*, .pdf, .doc, .docx" />
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" />
-            </svg>
-        </label>
+        <div class="flex items-center space-x-2">
+            <!-- Sticker Button -->
+            <button type="button"
+                    class="p-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+                    <path
+                        d="M16.5 10.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm-6 0a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM12 14.75c1.5 0 4 0.75 4 2.25H8c0-1.5 2.5-2.25 4-2.25z"
+                        fill="#000"/>
+                </svg>
+            </button>
 
+            <!-- File Upload Button -->
+            <label
+                class="p-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                <input
+                    wire:model="uploadedFile"
+                    type="file"
+                    class="hidden"
+                    accept="image/*, .pdf, .doc, .docx"/>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5"/>
+                </svg>
+            </label>
 
-        <!-- Input or Audio Playback Container -->
-        <div id="inputOrPlayback" class="flex-1 m-auto" wire:ignore.self>
-            <!-- Initially, it contains the input field -->
-            <input
-                id="messageInput"
-                wire:model.live="message"
-                type="text"
-                name="message"
-                placeholder="Enter Message..."
-                wire:keydown.enter="sendMessage"
-                class="w-full p-2 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-            />
-        </div>
-
-        <!-- Voice Message Recording Controls -->
-        <div class="p-4 bg-gray-100 flex items-center space-x-4">
-            <!-- Voice Toggle Button with wire:click -->
+            <!-- Voice Recording Button -->
             <button
-                wire:click="toggleRecording"
-                id="voice_btn"
+                id="voice_btn" @click="toggleRecording()"
                 type="button"
                 class="p-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 {{ $isRecording ? 'focus:ring-red-500' : 'focus:ring-blue-500' }}"
             >
-                <!-- Icon Changes Based on Recording State -->
                 @if($isRecording)
                     <!-- Stop Recording Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-600 bg-white" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M6 6h12v12H6V6z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-600 bg-white" viewBox="0 0 24 24"
+                         fill="currentColor">
+                        <path d="M6 6h12v12H6V6z"/>
                     </svg>
                 @else
                     <!-- Start Recording Icon -->
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600 bg-white" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 3a3 3 0 00-3 3v6a3 3 0 106 0V6a3 3 0 00-3-3zM7 11.25V12c0 2.76 2.24 5 5 5s5-2.24 5-5v-.75M8.5 19h7m-7-1v1m7-1v1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600 bg-white" viewBox="0 0 24 24"
+                         fill="currentColor">
+                        <path
+                            d="M12 3a3 3 0 00-3 3v6a3 3 0 106 0V6a3 3 0 00-3-3zM7 11.25V12c0 2.76 2.24 5 5 5s5-2.24 5-5v-.75M8.5 19h7m-7-1v1m7-1v1"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                 @endif
             </button>
         </div>
 
+        <!-- File Preview Section -->
+        @if ($uploadedFile)
+            <div class="p-4 bg-white border border-gray-300 rounded-lg w-full h-full">
+                @if (str_starts_with($uploadedFile->getMimeType(), 'image/'))
+                    <!-- Large Image Preview -->
+                    <div class="flex flex-col items-center space-y-2">
+                        <img src="{{ $uploadedFile->temporaryUrl() }}" alt="Preview"
+                             class="w-1/2 max-h-[450px] rounded-md shadow-md">
+                        <p class="text-sm text-gray-600">File Name: {{ $uploadedFile->getClientOriginalName() }}</p>
+                        <p class="text-xs text-gray-500">Size: {{ number_format($uploadedFile->getSize() / 1024, 2) }}
+                            KB</p>
+                    </div>
+                @else
+                    <!-- File Preview with Icon -->
+                    <div class="flex flex-col items-center space-y-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-gray-500" fill="none"
+                             viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 2v6h6"/>
+                        </svg>
+                        <p class="text-sm font-semibold text-gray-700">{{ $uploadedFile->getClientOriginalName() }}</p>
+                        <p class="text-xs text-gray-500">Size: {{ number_format($uploadedFile->getSize() / 1024, 2) }}
+                            KB</p>
+                    </div>
+                @endif
 
-        <!-- Send Button -->
-        <button id="send_btn"  type="submit" class="p-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7-7 7M5 12h16" />
-            </svg>
-        </button>
+                <!-- File Description Input -->
+                <textarea
+                    wire:model.defer="fileDescription"
+                    rows="3"
+                    class="w-full p-2 mt-4 text-sm text-gray-700 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    placeholder="Add a description for the file..."></textarea>
+
+                <!-- Remove File Button -->
+                <button type="button" wire:click="$set('uploadedFile', null)"
+                        class="mt-2 text-red-500 hover:text-red-600">
+                    Remove File
+                </button>
+            </div>
+        @endif
+
+
+        <!-- Text Input and Send Button -->
+        <div class="flex items-center w-full space-x-2">
+            <!-- Input or Audio Playback Container -->
+            <div id="inputOrPlayback" class="flex-1 m-auto" wire:ignore.self>
+                <!-- Initially, it contains the input field -->
+                <input
+                    id="messageInput"
+                    wire:model.live="message"
+                    type="text"
+                    name="message"
+                    placeholder="Enter Message..."
+                    wire:keydown.enter="sendMessage"
+                    class="w-full p-2 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                />
+            </div>
+            <button
+                id="send_btn"
+                type="submit"
+                class="p-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7-7 7M5 12h16"/>
+                </svg>
+            </button>
+        </div>
     </form>
 </div>
 

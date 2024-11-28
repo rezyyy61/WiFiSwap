@@ -23,5 +23,8 @@
             </main>
         </div>
         @livewireScripts
+        <script src="https://unpkg.com/wavesurfer.js@7.8.9/dist/wavesurfer.min.js"></script>
+        <script src="https://unpkg.com/wavesurfer.js@6.6.2/dist/plugin/wavesurfer.microphone.min.js"></script>
+
     </body>
 </html>

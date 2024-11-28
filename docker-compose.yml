@@ -83,22 +83,7 @@ services:
         networks:
             - laravel_network
 
-        # WebSockets service for Laravel broadcasting
-    websocket:
-        platform: linux/amd64
-        image: node:16-alpine  # You can use node or a dedicated websockets image
-        container_name: websocket
-        working_dir: /var/www
-        volumes:
-            - ./:/var/www
-        command: >
-            sh -c "php artisan websockets:serve"  # Start Laravel Websockets
-        depends_on:
-            - app
-        networks:
-            - laravel_network
-        ports:
-            - "6001:6001"
+
 volumes:
     mysql_data:
         driver: local
